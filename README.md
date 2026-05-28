@@ -7,28 +7,21 @@
 </p>
 
 ![Agenthon](https://img.shields.io/badge/Agenthon-Entry-brightgreen)
-![Status](https://img.shields.io/badge/status-prototype-orange)
-![License](https://img.shields.io/badge/license-demo-blue)
+# SecureAgent AI — Agenthon Hackathon Submission
 
-Overview
---------
-SecureAgent AI is a multi-agent DevSecOps platform built for Agenthon that showcases autonomous security operations: cloning repositories, running multi-tool SAST scans, enriching findings with threat intelligence, running an agent debate to prioritize risk, generating fixes via LLMs (or fallback templates), and automatically opening PRs with human-readable justifications.
+Executive summary
+-----------------
+SecureAgent AI is an autonomous DevSecOps platform that demonstrates a complete detect→triage→remediate workflow. It integrates open-source static analysis tools, threat intelligence enrichment, prioritized risk reasoning via an agent debate, LLM-assisted remediation with deterministic fallbacks, and automated patching with GitHub pull requests. The project emphasizes reproducibility, explainability, and practical impact.
 
-Why this wins (one-liner)
--------------------------
-It reduces mean time to remediation from hours to minutes by automating the full detect→triage→remediate loop with explainable agent logs and safe fallbacks.
+What the judges should evaluate
+------------------------------
+- Innovation: autonomous multi-agent orchestration, agent debate system, and LLM remediation strategies.
+- Impact: demonstrable reduction of manual remediation steps through automated PR creation and clear risk justification.
+- Technical complexity: engineering of background workflows, integration of SAST tools, vector-based RAG, and safe fallback behaviors.
+- Presentation: clarity of demo, reproducible steps, and transparent logs for auditability.
 
-Showcase highlights
--------------------
-- Fully autonomous scan workflow with background orchestration and agent logs
-- LLM-assisted remediation with deterministic fallbacks for offline demos
-- Automated patching and GitHub PR generation with clear commit messages
-- RAG-powered Security Mentor for contextual developer help
-
-Eye-catching Architecture
--------------------------
-High-level component diagram and execution flow:
-
+High-level architecture
+----------------------
 ```mermaid
 graph LR
   UI[Frontend Dashboard]
@@ -37,7 +30,7 @@ graph LR
   Git[GitService]
   Scanner[ScannerService]
   Vector[Chroma Vector DB]
-  LLM[LLM Provider (Gemini/OpenAI) or Mock]
+  LLM[LLM Provider or Mock]
   DB[(Postgres / SQLite)]
   GitHub[GitHub]
 
@@ -51,93 +44,72 @@ graph LR
   Orch --> DB
   Orch --> GitHub
 
-  style Orch fill:#f9f,stroke:#333,stroke-width:2px
+  classDef core fill:#f9f,stroke:#333,stroke-width:1px
+  class Orch core
 ```
 
-Sequence of a Winning Demo
--------------------------
-```mermaid
-sequenceDiagram
-  participant Judge
-  participant UI
-  participant API
-  participant Orch
-  participant Scanner
-  participant LLM
-  participant GitHub
+Recommended demo flow (concise)
+-------------------------------
+1. Start the full stack (recommended): `docker-compose up --build`.
+2. Open the UI and trigger a scan against `vulnerable-app` under `data/clones/`.
+3. Observe agent logs stream: Scanner → Threat Intelligence → Risk Debate → Fix Recommendation → Patch Generation.
+4. Open the generated GitHub PR to review the patch, commit message, and agent reasoning recorded in the PR description.
 
-  Judge->>UI: Click "Scan Vulnerable App"
-  UI->>API: POST /api/scans/trigger/{repo}
-  API->>Orch: start scan (background)
-  Orch->>Scanner: run semgrep/bandit/gitleaks or fallback
-  Scanner-->>Orch: findings
-  Orch->>LLM: ask for remediation suggestion
-  LLM-->>Orch: patch code
-  Orch->>GitHub: open PR with patch
-  Orch-->>API: update report
-  API-->>UI: stream agent logs
-  UI-->>Judge: show PR link and summary
-```
+Judging rubric mapping (evidence pointers)
+-----------------------------------------
+- Innovation (30%): see `backend/app/agents/orchestrator.py` for the debate and multi-agent choreography.
+- Impact (30%): evidence of automation in `backend/app/services/git_service.py` (branch/PR automation) and generated PR URLs in `Vulnerability` records.
+- Technical complexity (25%): `backend/app/services/scanner_service.py` demonstrates SAST integration and regex/LLM fallback logic.
+- Presentation (15%): use the UI and `/api/scans/{scan_id}/logs` to show ordered, timestamped agent logs.
 
-Impress with a 2-minute Demo Script (ready-to-read)
--------------------------------------------------
-0:00–0:10 — Intro: "This is SecureAgent AI — automated DevSecOps in action."
-0:10–0:40 — Trigger: click the `Scan` button for `vulnerable-app`. Show backend logs streaming in the dashboard.
-0:40–1:10 — Explain the agent steps as they appear (Scanner → Threat Intel → Debate → Fix).
-1:10–1:40 — Show generated patch, open the automated PR and explain the commit message and risk reasoning.
-1:40–2:00 — Ask the Security Mentor a targeted question (e.g., "How did you prevent SQLi?") and show the contextual answer.
-
-Judging Rubric Alignment
-------------------------
-- Innovation (30%): autonomous multi-agent workflow + debate system + LLM remediation
-- Impact (30%): measurable reduction in remediation time; automated PR creation for rapid fixes
-- Technical Complexity (25%): integrated SAST, vector RAG, background tasks, CI/PR automation
-- Presentation (15%): clear demo script, logs, and explainable audit trail
-
-Quickstart (one-liner)
-----------------------
-Run the full demo locally via Docker: `docker-compose up --build` and open `http://localhost` to access the UI.
-
-Commands (copyable)
--------------------
+Commands to run (judge-friendly)
+--------------------------------
+Full stack (recommended):
 ```bash
-# Full stack (recommended)
 docker-compose up --build
+```
 
-# Backend dev
+Backend (development):
+```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\activate    # Windows
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-# Frontend dev
+Frontend (development):
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Files to inspect (for judges)
------------------------------
-- Orchestrator & workflow: [backend/app/agents/orchestrator.py](backend/app/agents/orchestrator.py#L1)
-- Scanner & fallbacks: [backend/app/services/scanner_service.py](backend/app/services/scanner_service.py#L1)
-- Scan endpoints: [backend/app/routers/scans.py](backend/app/routers/scans.py#L1)
-- Demo clones: `data/clones/vulnerable-app`
-
-Assets (recommended for final submission)
+Files and locations for quick inspection
 ---------------------------------------
-- `assets/demo.gif` — screen capture of scan → PR creation (30s loop)
-- `assets/architecture.png` — high-res architecture diagram for judges' slide deck
-- `assets/one-pager.pdf` — short summary slide
+- Core orchestration: [backend/app/agents/orchestrator.py](backend/app/agents/orchestrator.py#L1)
+- Scanner and fallback rules: [backend/app/services/scanner_service.py](backend/app/services/scanner_service.py#L1)
+- Scan trigger endpoints: [backend/app/routers/scans.py](backend/app/routers/scans.py#L1)
+- Demo repositories: `data/clones/vulnerable-app`
 
-Where to add polish
--------------------
-- Record a 30s demo GIF showing scan → PR creation for the judges (highly recommended).
-- Add CI hook that triggers a demo scan on PR to prove automation.
-- Add small README `slides/` folder with 3 PPT slides for a quick pitch.
+Assets to include with final submission
+--------------------------------------
+- `assets/demo.gif` — 20–30s loop of scan → PR creation (recommended)
+- `assets/architecture.png` — high-resolution diagram for judge slides
+- `assets/one-pager.pdf` — concise project summary for judges
 
-Contact & Live Demo
--------------------
-Project owner: Kishanmc — available for live demos and Q&A during Agenthon.
+Presentation guidance for judges
+--------------------------------
+- Begin with the executive summary (30s).
+- Trigger the demo scan and narrate agent steps as logs appear (60s).
+- Inspect the automated PR and read the agent's reasoning and remediation (30s).
 
-— Good luck! If you want, I can generate the demo GIF placeholder frames and a short slide deck next.
+Contact
+-------
+Project owner: Kishanmc — available for scheduled live demos and technical Q&A during Agenthon.
+
+Next steps
+----------
+If you would like, I can:
+- Generate an `assets/demo.gif` placeholder and a slide deck `slides/pitch.pdf`.
+- Produce a short judge-facing checklist that maps UI screens to rubric evidence.
