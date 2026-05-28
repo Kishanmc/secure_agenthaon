@@ -1,126 +1,143 @@
-# SecureAgent AI — Agenthon Hackathon Entry
+<!-- HERO -->
+<p align="center">
+  <img alt="logo" src="assets/logo-placeholder.png" width="120" height="120" />
+  <h1 align="center">SecureAgent AI</h1>
+  <p align="center"><em>Autonomous DevSecOps — scan, prioritize, patch, and PR</em></p>
 
-> Autonomous, end-to-end AI-driven DevSecOps platform that finds, prioritizes, and fixes application vulnerabilities — automatically.
+</p>
+
+![Agenthon](https://img.shields.io/badge/Agenthon-Entry-brightgreen)
+![Status](https://img.shields.io/badge/status-prototype-orange)
+![License](https://img.shields.io/badge/license-demo-blue)
 
 Overview
 --------
-SecureAgent AI is an integrated multi-agent security platform built to demonstrate autonomous DevSecOps workflows for the Agenthon hackathon. It combines static analysis, threat intelligence, risk prioritization, AI-driven patch generation, and automated pull-request creation into a single pipeline so applications are scanned, triaged, and remediated with minimal human effort.
+SecureAgent AI is a multi-agent DevSecOps platform built for Agenthon that showcases autonomous security operations: cloning repositories, running multi-tool SAST scans, enriching findings with threat intelligence, running an agent debate to prioritize risk, generating fixes via LLMs (or fallback templates), and automatically opening PRs with human-readable justifications.
 
-Why this wins
--------------
-- End-to-end autonomy: clones repos, runs SAST, enriches findings, debates risk, and opens PRs.
-- Actionable remediation: generated secure patches (LLM-driven or rule-based fallback) and automated PR creation.
-- Explainability & traceability: every step is logged by agents into a queryable audit trail.
-- Practical fallback design: works offline (mock AI) and with real LLMs (Gemini/OpenAI) when API keys are supplied.
-- RAG-enabled Security Mentor: in-app assistant answers developer security questions using local vectors.
+Why this wins (one-liner)
+-------------------------
+It reduces mean time to remediation from hours to minutes by automating the full detect→triage→remediate loop with explainable agent logs and safe fallbacks.
 
-Key Features
-------------
-- Scanner orchestration (Semgrep / Bandit / Gitleaks) with AI/regex fallback
-- Threat intelligence mapping (CVE/CVSS) and exploit availability estimation
-- Agent debate for risk prioritization and business-impact reasoning
-- Automated patch branch creation, commit, push, and GitHub PR generation
-- Persistent vector store (Chroma) for RAG-driven mentoring and contextual answers
+Showcase highlights
+-------------------
+- Fully autonomous scan workflow with background orchestration and agent logs
+- LLM-assisted remediation with deterministic fallbacks for offline demos
+- Automated patching and GitHub PR generation with clear commit messages
+- RAG-powered Security Mentor for contextual developer help
 
-Architecture (high level)
-------------------------
+Eye-catching Architecture
+-------------------------
+High-level component diagram and execution flow:
+
 ```mermaid
-flowchart TD
-  A[Trigger scan (API/UI)] --> B[Orchestrator]
-  B --> C{Git Service}
-  B --> D[Scanner Service]
-  D --> E[Findings]
-  E --> F[Threat Intelligence]
-  E --> G[Risk Prioritization & Debate]
-  G --> H[Fix Recommendation (LLM / Fallback)]
-  H --> I[Patch Generation -> GitHub PR]
-  I --> J[Reporting & Agent Logs]
-  J --> K[Frontend Dashboard]
-  J --> L[Vector DB for RAG]
+graph LR
+  UI[Frontend Dashboard]
+  API[FastAPI Backend]
+  Orch[Orchestrator Agent]
+  Git[GitService]
+  Scanner[ScannerService]
+  Vector[Chroma Vector DB]
+  LLM[LLM Provider (Gemini/OpenAI) or Mock]
+  DB[(Postgres / SQLite)]
+  GitHub[GitHub]
+
+  UI --> API
+  API --> Orch
+  Orch --> Git
+  Orch --> Scanner
+  Scanner --> Orch
+  Orch --> Vector
+  Orch --> LLM
+  Orch --> DB
+  Orch --> GitHub
+
+  style Orch fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
-Important files
----------------
-- Orchestrator & core workflow: [backend/app/agents/orchestrator.py](backend/app/agents/orchestrator.py#L1)
-- Scanner logic & SAST wrappers: [backend/app/services/scanner_service.py](backend/app/services/scanner_service.py#L1)
-- Scan endpoints & trigger: [backend/app/routers/scans.py](backend/app/routers/scans.py#L1)
-- Backend entrypoint: [backend/app/main.py](backend/app/main.py#L1)
-- Docker compose for full-stack run: [docker-compose.yml](docker-compose.yml#L1)
-- Frontend (Vite + React): [frontend/package.json](frontend/package.json#L1)
+Sequence of a Winning Demo
+-------------------------
+```mermaid
+sequenceDiagram
+  participant Judge
+  participant UI
+  participant API
+  participant Orch
+  participant Scanner
+  participant LLM
+  participant GitHub
 
-Quickstart (recommended: Docker Compose)
----------------------------------------
-1. Build and run the full stack (Postgres + Chroma + Backend + Frontend):
+  Judge->>UI: Click "Scan Vulnerable App"
+  UI->>API: POST /api/scans/trigger/{repo}
+  API->>Orch: start scan (background)
+  Orch->>Scanner: run semgrep/bandit/gitleaks or fallback
+  Scanner-->>Orch: findings
+  Orch->>LLM: ask for remediation suggestion
+  LLM-->>Orch: patch code
+  Orch->>GitHub: open PR with patch
+  Orch-->>API: update report
+  API-->>UI: stream agent logs
+  UI-->>Judge: show PR link and summary
+```
 
+Impress with a 2-minute Demo Script (ready-to-read)
+-------------------------------------------------
+0:00–0:10 — Intro: "This is SecureAgent AI — automated DevSecOps in action."
+0:10–0:40 — Trigger: click the `Scan` button for `vulnerable-app`. Show backend logs streaming in the dashboard.
+0:40–1:10 — Explain the agent steps as they appear (Scanner → Threat Intel → Debate → Fix).
+1:10–1:40 — Show generated patch, open the automated PR and explain the commit message and risk reasoning.
+1:40–2:00 — Ask the Security Mentor a targeted question (e.g., "How did you prevent SQLi?") and show the contextual answer.
+
+Judging Rubric Alignment
+------------------------
+- Innovation (30%): autonomous multi-agent workflow + debate system + LLM remediation
+- Impact (30%): measurable reduction in remediation time; automated PR creation for rapid fixes
+- Technical Complexity (25%): integrated SAST, vector RAG, background tasks, CI/PR automation
+- Presentation (15%): clear demo script, logs, and explainable audit trail
+
+Quickstart (one-liner)
+----------------------
+Run the full demo locally via Docker: `docker-compose up --build` and open `http://localhost` to access the UI.
+
+Commands (copyable)
+-------------------
 ```bash
+# Full stack (recommended)
 docker-compose up --build
-```
 
-2. Backend only (dev):
-
-```bash
+# Backend dev
 cd backend
 python -m venv .venv
-.venv\Scripts\activate    # on Windows
+.venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
 
-3. Frontend (dev):
-
-```bash
+# Frontend dev
 cd frontend
 npm install
 npm run dev
 ```
 
-API highlights
---------------
-- Trigger a scan (background task): POST `/api/scans/trigger/{repo_id}` (see router at [backend/app/routers/scans.py](backend/app/routers/scans.py#L1))
-- Get scan logs (progress): GET `/api/scans/{scan_id}/logs`
+Files to inspect (for judges)
+-----------------------------
+- Orchestrator & workflow: [backend/app/agents/orchestrator.py](backend/app/agents/orchestrator.py#L1)
+- Scanner & fallbacks: [backend/app/services/scanner_service.py](backend/app/services/scanner_service.py#L1)
+- Scan endpoints: [backend/app/routers/scans.py](backend/app/routers/scans.py#L1)
+- Demo clones: `data/clones/vulnerable-app`
 
-Configuration
--------------
-- Configure AI provider and API keys via environment variables or `.env`:
-  - `AI_PROVIDER` = `mock` | `gemini` | `openai`
-  - `GEMINI_API_KEY`, `OPENAI_API_KEY` when using real LLMs
-- DB: `DATABASE_URL` defaults to SQLite but docker compose config uses Postgres.
+Assets (recommended for final submission)
+---------------------------------------
+- `assets/demo.gif` — screen capture of scan → PR creation (30s loop)
+- `assets/architecture.png` — high-res architecture diagram for judges' slide deck
+- `assets/one-pager.pdf` — short summary slide
 
-How it works (concise)
-----------------------
-1. A scan is created (API/UI). The `Orchestrator` runs as a background job and logs each step.
-2. The `GitService` clones the target repo into `data/clones/`.
-3. `ScannerService` runs available SAST tools; if none are found it runs regex/AI fallback and inserts demo findings.
-4. Findings are saved as `Vulnerability` records; `Threat Intelligence` enriches with CVE/CVSS.
-5. Agents perform a short debate to determine final priority and business impact.
-6. `Fix Recommendation Agent` asks the LLM (Gemini/OpenAI) for remediation or uses rule-based templates.
-7. `Patch Generation Agent` can create a branch, apply the fix, commit, push, and open a GitHub PR.
-8. `Reporting Agent` compiles metrics and completes the audit trail.
+Where to add polish
+-------------------
+- Record a 30s demo GIF showing scan → PR creation for the judges (highly recommended).
+- Add CI hook that triggers a demo scan on PR to prove automation.
+- Add small README `slides/` folder with 3 PPT slides for a quick pitch.
 
-Winning pitch (elevator)
-------------------------
-SecureAgent AI demonstrates how autonomous agents can reduce time-to-remediation by automating the full triage → fix → PR loop while preserving human oversight via concise reports and PRs. For Agenthon judges: this project blends practical security tooling, explainable agent logs, and LLM-driven remediation to dramatically reduce developer toil and speed up secure delivery.
+Contact & Live Demo
+-------------------
+Project owner: Kishanmc — available for live demos and Q&A during Agenthon.
 
-Demo suggestions for judges
---------------------------
-- Show an automated scan run on one of the sample clones under `data/clones/` (e.g., `vulnerable-app`) and watch the agent logs stream to `/api/scans/{scan_id}/logs`.
-- Trigger automated PR creation for a High/Critical finding and show the PR diff and commit message.
-- Open the Security Mentor and ask for remediation advice (RAG + LLM) to demonstrate contextual answers.
-
-Next steps & How you can extend
---------------------------------
-- Add CI integration to auto-trigger scans on PRs.
-- Add SSO and RBAC for enterprise deployments.
-- Plug in additional vector sources for richer RAG context (internal KBs, infra runbooks).
-
-Contributing
-------------
-We welcome improvements — submit PRs and issues. See code in `backend/app/` and frontend in `frontend/`.
-
-License
--------
-This project is provided for the Agenthon hackathon demonstration purposes. Feel free to relicense for the event; include attribution to the original authors.
-
-Contact
--------
-Project owner: Kishanmc — open to walkthroughs and live demos during Agenthon.
+— Good luck! If you want, I can generate the demo GIF placeholder frames and a short slide deck next.
