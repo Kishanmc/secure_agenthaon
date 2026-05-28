@@ -1,4 +1,4 @@
-<!-- HERO -->
+
 <p align="center">
   <h1 align="center">SecureAgent AI</h1>
   <p align="center"><em>Autonomous DevSecOps — scan, prioritize, patch, and PR</em></p>
@@ -6,7 +6,10 @@
 </p>
 
 ![Agenthon](https://img.shields.io/badge/Agenthon-Entry-brightgreen)
-# Project Title
+
+# SecureAgent AI
+
+*Autonomous DevSecOps — scan, prioritize, patch, and PR*
 
 A short description of the project: what it does and why it matters.
 
@@ -30,7 +33,6 @@ flowchart LR
   Orchestrator --> DB[(Database)]
 ```
 
-Workflow steps
 - Trigger: a scan is initiated via the UI, API, or CI hook.
 - Clone & Scan: `Scanner Agent` clones the repository and runs SAST tools (semgrep, bandit, gitleaks) or the fallback scanner.
 - Enrich: `Threat Intelligence Agent` maps findings to CVEs/CVSS and annotates exploitability.
@@ -38,7 +40,24 @@ Workflow steps
 - Remediate: `Fix Recommendation Agent` generates deterministic fixes via LLMs when available or uses rule-based templates as fallback.
 - Patch & PR: `Patch Generation Agent` applies fixes to a branch and automatically opens a PR with rationale and links to evidence.
 
-Why agentic design
+## Workflow steps
+
+1. Trigger: a scan is initiated via the UI, API, or CI hook.
+2. Clone & Scan: `Scanner Agent` clones the repository and runs SAST tools (semgrep, bandit, gitleaks) or the fallback scanner.
+3. Enrich: `Threat Intelligence Agent` maps findings to CVEs/CVSS and annotates exploitability.
+4. Debate & Prioritize: `Risk Prioritization Agent` aggregates scanner severity and intel to assign final priority with reasoning recorded in the audit log.
+5. Remediate: `Fix Recommendation Agent` generates deterministic fixes via LLMs when available or uses rule-based templates as fallback.
+6. Patch & PR: `Patch Generation Agent` applies fixes to a branch and automatically opens a PR with rationale and links to evidence.
+- Trigger: a scan is initiated via the UI, API, or CI hook.
+- Clone & Scan: `Scanner Agent` clones the repository and runs SAST tools (semgrep, bandit, gitleaks) or the fallback scanner.
+- Enrich: `Threat Intelligence Agent` maps findings to CVEs/CVSS and annotates exploitability.
+- Debate & Prioritize: `Risk Prioritization Agent` aggregates scanner severity and intel to assign final priority with reasoning recorded in the audit log.
+- Remediate: `Fix Recommendation Agent` generates deterministic fixes via LLMs when available or uses rule-based templates as fallback.
+- Patch & PR: `Patch Generation Agent` applies fixes to a branch and automatically opens a PR with rationale and links to evidence.
+
+
+## Why agentic design
+
 - Separation of concerns: agents are small, testable components focused on single responsibilities.
 - Explainability: each agent writes structured logs that form an audit trail for judges and reviewers.
 - Robustness: LLM calls are optional—fallbacks ensure demonstrations run reliably in offline environments.
