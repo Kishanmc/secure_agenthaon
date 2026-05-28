@@ -1,6 +1,5 @@
 <!-- HERO -->
 <p align="center">
-  <img alt="logo" src="assets/logo-placeholder.png" width="120" height="120" />
   <h1 align="center">SecureAgent AI</h1>
   <p align="center"><em>Autonomous DevSecOps — scan, prioritize, patch, and PR</em></p>
 
