@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: secureagent_db
+    environment:
+      POSTGRES_USER: secureagent
+      POSTGRES_PASSWORD: securepassword123
+      POSTGRES_DB: secureagent_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - secureagent_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U secureagent -d secureagent_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    image: chromadb/chroma:0.4.15
+    container_name: secureagent_vector
+    ports:
+      - "8001:8000" # Mapped to 8001 on host to avoid conflict with backend
+    volumes:
+      - chromadb_data:/chroma/data
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/data
+    networks:
+      - secureagent_net
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: secureagent_backend
+    environment:
+      - DATABASE_URL=postgresql://secureagent:securepassword123@postgres/secureagent_db
+      - AI_PROVIDER=mock
+      - GEMINI_API_KEY=
+      - OPENAI_API_KEY=
+      - GITHUB_TOKEN=
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    networks:
+      - secureagent_net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: secureagent_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - secureagent_net
+
+networks:
+  secureagent_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  chromadb_data:
+  backend_data:

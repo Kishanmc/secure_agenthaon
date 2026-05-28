@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Dashboard</h1>
+    <div id="user-info"></div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name') || 'Guest';
+        // VULNERABLE: Cross-site scripting (XSS)
+        document.getElementById('user-info').innerHTML = "Welcome back, " + name;
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+venv/
+.venv/
+venv*/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Test / coverage
+.pytest_cache/
+.cache/
+.coverage
+htmlcov/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files & secrets
+.env
+.env.*
+secrets/
+*.pem
+
+# Node / frontend
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/.vite
+
+# Docker
+docker-compose.override.yml
+*.log
+
+# Databases
+*.sqlite3
+/data/chroma/
+/data/chroma/*
+!data/clones/
+!data/clones/**
+
+# Logs
+logs/
+*.log
+
+# Misc
+coverage.xml
+coverage/
+docs/_build/

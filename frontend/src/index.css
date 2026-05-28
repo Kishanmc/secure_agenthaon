@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+  
+  pre, code, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Cyber grid background pattern */
+.grid-cyber {
+  background-image: 
+    linear-gradient(rgba(42, 54, 79, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 54, 79, 0.15) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Futuristic glassmorphism card */
+.glass-card {
+  background: rgba(22, 27, 42, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(42, 54, 79, 0.6);
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+  transition: all 0.3s ease;
+}
+
+/* Neon glow buttons */
+.btn-cyber-primary {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-cyber-primary:hover {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-cyber-success {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-cyber-success:hover {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Styled terminal logs */
+.terminal-window {
+  background-color: #05070c;
+  border: 1px solid #1a2336;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Webkit scrollbar for cybertheme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a2336;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s infinite ease-in-out;
+}
